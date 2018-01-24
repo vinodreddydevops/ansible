@@ -1,0 +1,30 @@
+---
+ - hosts: all
+   vars: 
+    - name: '{{ name }}'
+    - image: '{{ image }}'
+    - key_name: '{{ keyname }}'
+    - flavor: '{{ flavor }}'
+    - net-id: '{{ net-id }}'
+    - hostname: '{{ hostname }}'
+    - auth_url: '{{ auth_url }}'
+   tasks:
+   - name: Deploy an instance 
+     os_server:
+       state: present
+       auth:
+         auth_url: "{{ auth_url }}"
+         username: admin
+         password: admin123
+         project_name: admin
+         domain_id: default
+       name: "{{ vars.name }}"
+       image: "{{ vars.image }}"
+       key_name: "{{ vars.key_name }}"
+       timeout: 200
+       flavor: "{{ vars.flavor }}"
+       
+       nics:
+        - net-id: "{{ vars.net-id }}"
+       meta:
+         hostname: "{{ vars.hostname }}"
