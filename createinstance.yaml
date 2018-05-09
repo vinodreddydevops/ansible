@@ -1,0 +1,42 @@
+---
+ - hosts: localhost
+   connection: local
+   vars_files:
+       - var.yml
+   tasks:
+     - name: Install dependencies 
+       apt: name={{ item }} state=installed
+       with_items:
+          - libevent-devel
+          - python-devel
+     - name: Install PyCrypto for gce secure authentication 
+       pip: name=PyCrypto
+
+     - name: Launch instances
+       gce:
+           instance_names: factserver
+           machine_type: n1-standard-2	
+           image: ubuntu-1604-lts
+           service_account_email: "{{ service_account_email }}"
+           credentials_file: "{{ credentials_file }}"
+           project_id: "{{ project_id }}"
+           disk_size: 32
+           state: present
+           zone: us-east1-b
+           ip_forward: true 
+       register: instance
+
+     - name: Create volume and attach to factserver
+       gce_pd:
+          instance_name: factserver
+          size_gb: 500
+          name: postgres
+          mode: READ_WRITE
+          service_account_email: "{{ service_account_email }}"
+          credentials_file: "{{ credentials_file }}"
+          project_id: "{{ project_id }}"
+          zone: us-east1-b
+       when: instance is succeeded
+
+
+           
