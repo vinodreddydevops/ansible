@@ -5,6 +5,14 @@
        debug: msg="{{ lookup('env','ZK_HOST') }}" 
        register: zookeeper
    
-     - name: echo error msg
-       debug: msg="test"
-       when: zookeeper != -1
+     - name: if ZK_HOST environment varaible is not defined then print this messages
+       debug: msg="Please update zookeeper host ip "
+       when: zookeeper.msg == ""
+     
+     - name: Verify Kafaka
+       debug: msg="{{ lookup('env', 'KB_HOST') }}"
+       register: kafaka
+        
+     - name: if KB_HOST environment varaible is not defined then print this messages
+       debug: msg="Please update KB_HOST host ip "
+       when: kafaka.msg == ""
