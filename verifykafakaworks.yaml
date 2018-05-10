@@ -34,7 +34,8 @@
        debug: msg="Spawning consumer in the background"
 
      - name: Use the latest connector . old connector went to zookeeper and the new one goes to kafka Broker
-       shell: /bin/bash -c /opt/kafka/bin/kafka-console-consumer.sh --topic KafakaWorks --bootstrap-server $KB_HOST:9092 --timeout-ms 5000 2> /dev/null & 
+       shell: /bin/bash -c /opt/kafka/bin/kafka-console-consumer.sh --topic KafakaWorks --bootstrap-server $KB_HOST:9092 --timeout-ms 5000 2> /dev/null &
+       pause: minutes=3 
      - name: Print end messages
        debug: 
          msg:
