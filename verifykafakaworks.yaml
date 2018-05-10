@@ -16,3 +16,27 @@
      - name: if KB_HOST environment varaible is not defined then print this messages
        debug: msg="Please update KB_HOST host ip "
        when: kafaka.msg == ""
+
+     - name: if ZK_HOST environment varibale is exists then check the zookeeper is working or not
+       shell: /bin/bash -c  echo ruok | nc localhost 8080
+       register: ZKcheck
+       ignore_errors: true
+     
+     - name: if zookepper is running
+       debug: msg="Zookeeper Works!"
+       when: ZKcheck is succeeded
+     
+     - name: if zookepper is  not running
+       debug: msg="Zookeeper is not Working"
+       when: ZKcheck is failed
+
+     - name: sample text message
+       debug: msg="Spawning consumer in the background"
+
+     - name: Use the latest connector . old connector went to zookeeper and the new one goes to kafka Broker
+       shell: /bin/bash -c /opt/kafka/bin/kafka-console-consumer.sh --topic KafakaWorks --bootstrap-server $KB_HOST:9092 --timeout-ms 5000 2> /dev/null & 
+     - name: Print end messages
+       debug: 
+         msg:
+          - "Producing messages to Topic 'KafkaWorks'..."
+          - "Done"
