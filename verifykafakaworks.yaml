@@ -1,0 +1,10 @@
+---
+ - hosts: local
+   tasks:
+     - name: Verify zookeeper
+       debug: msg="{{ lookup('env','ZK_HOST') }}" 
+       register: zookeeper
+   
+     - name: echo error msg
+       debug: msg="test"
+       when: zookeeper != -1
