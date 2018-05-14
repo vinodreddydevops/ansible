@@ -1,0 +1,11 @@
+- name: Test Zookeeper
+  block:
+     - name: if zookepper is working
+       debug: msg="Zookeeper Works!"
+     - name: execute these shell scripts 
+       shell: "{{ item }}"
+       with_items:
+        - /bin/bash -c /opt/kafka/bin/kafka-topics.sh --zookeeper $ZK_HOST:2181 --if-not-exists --create --topic $KFK_TOPIC --partitions 1 --replication-factor 1 --config retention.ms=900000 &>> $FILE_LOG
+        - /bin/bash -c /opt/kafka/bin/kafka-topics.sh --zookeeper $ZK_HOST:2181 --list | grep $KFK_TOPIC &>> $FILE_LOG
+        - echo "Completed creating topic '$KFK_TOPIC'"  &>> $FILE_LOG
+  when: Zookeeper is succeeded 
