@@ -22,8 +22,6 @@
  #        image: ami-e251209a
  #        wait: yes
  #        region: us-west-2
- #        aws_access_key: AKIAI3PY6MP4KKAQOWAA
- #        aws_secret_key: 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
  #        tags:
 #          name: instance1
     - name: gather facts
