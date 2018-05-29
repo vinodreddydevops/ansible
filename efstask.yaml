@@ -1,0 +1,40 @@
+---
+ - hosts: local
+   tasks:
+    - name: create multiple efs volumes 
+      efs:
+       state: present
+       name: "{{ item }}"
+       region: us-west-2
+       aws_access_key: 
+       aws_secret_key: 
+       tags:
+         name: "{{ item }}"
+      with_items:
+         - volume1
+         - volume2
+
+#     - name: Create Instance 
+#       ec2:        
+
+#         key_name: test
+ #        instance_type: t2.micro
+ #        image: ami-e251209a
+ #        wait: yes
+ #        region: us-west-2
+ #        aws_access_key: AKIAI3PY6MP4KKAQOWAA
+ #        aws_secret_key: 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
+ #        tags:
+#          name: instance1
+    - name: gather facts
+      efs_facts:
+        name: volume1
+        region: us-west-2
+        aws_access_key: 
+        aws_secret_key: 
+      register: result
+   
+    - name: debug
+      debug: msg={{ result }}
+      
+            
