@@ -1,0 +1,55 @@
+---
+ - hosts: local
+   tasks:
+    - name: create private vpc for Dev and Test Environment
+      ec2_vpc_net:
+          name: myprivatevpc
+          cidr_block: 172.22.0.0/16
+          region: us-west-2
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+          tags:
+            Environment: Test
+      ignore_errors: true
+      register: privatevpc
+    - name: create public subnets
+      ec2_vpc_subnet:
+           state: present
+           vpc_id: "{{ privatevpc.vpc.id }}"
+           cidr: "{{ item }}"
+           region: us-west-2
+           aws_access_key: "{{ aws_access_key }}"
+           aws_secret_key: "{{ aws_secret_key }}"
+           resource_tags:
+                Name: public-subnet
+      with_items:
+          - 172.22.1.0/24 
+          - 172.22.2.0/24 
+      register: publicsubnet
+    - name: create private subnets
+      ec2_vpc_subnet:
+           state: present
+           vpc_id: "{{ privatevpc.vpc.id }}"
+           cidr: "{{ item }}"
+           region: us-west-2
+           aws_access_key: "{{ aws_access_key }}"
+           aws_secret_key: "{{ aws_secret_key }}"
+           resource_tags:
+                Name: private-subnet
+      with_items:
+          - 172.22.3.0/24
+          - 172.22.4.0/24 
+      register: privatesubnet
+    - name: Create Internet Gateway for assign the internet access to public networks 
+      ec2_vpc_igw:
+          vpc_id: "{{ privatevpc.vpc.id }}"
+          state: present
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+          region: us-west-2
+      register: igw
+
+    - name: debug
+      debug: msg={{ item.subnet.id }}
+      with_items: "{{ publicsubnet.results }}"
+      register: test          
