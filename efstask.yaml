@@ -33,6 +33,7 @@
       register: result
    
     - name: debug
-      debug: msg={{ result }}
+      debug: msg={{ item.efs.file_system_id }}
+      with_items: "{{ result.results}}"
       
             
